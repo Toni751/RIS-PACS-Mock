@@ -13,20 +13,11 @@ router.post("/", async (req, res) => {
   res.status(200).send(patients);
 });
 
-router.get("/images/:accession", async (req, res) => {
-  const accession = req.params.accession;
+router.post("/images", async (req, res) => {
+  const dicomFile = req.body;
 
-  const path = `./images/${accession}.dcm`;
-  console.log("Fetching image", accession, path);
-  const dicomFileBytes = fs.readFileSync(path);
-  const dataSet = dicomParser.parseDicom(dicomFileBytes);
-  const pixelDataElement = dataSet.elements.x7fe00010;
-  const pixelData = new Uint16Array(
-    dataSet.byteArray.buffer,
-    pixelDataElement.dataOffset,
-    pixelDataElement.length / 2
-  );
-  console.log("Pixel data", pixelData.length);
+  // This mocks saving the image in the PACS
+  fs.writeFile("./images/test.dcm", dicomFile);
   res.status(200).send(pixelData);
 });
 
